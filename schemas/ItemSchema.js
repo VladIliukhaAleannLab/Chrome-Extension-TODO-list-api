@@ -6,6 +6,7 @@ const ItemSchema = {
     info: String,
     type: String,
     user: String,
+    isAdminCreate: Boolean
 };
 
 module.exports = ItemSchema;

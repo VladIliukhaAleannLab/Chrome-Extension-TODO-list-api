@@ -17,6 +17,7 @@
     "express": "~4.16.1",
     "firebase": "^8.2.3",
     "http-errors": "~1.6.3",
+    "lodash": "^4.17.21",
     "mongoose": "^5.11.11",
     "morgan": "~1.9.1",
     "pug": "2.0.0-beta11"

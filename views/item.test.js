@@ -35,6 +35,21 @@ const testData = [
     },
 ];
 
+const testData1 = [
+    {
+        type: 'post',
+        item: {
+            id: '12345663245543',
+            createDate: new Date().toString(),
+            text: 'test1',
+            user: 'Jolly Roger',
+            type: 'Todo',
+            isAdminCreate: true,
+        }
+    },
+];
+
+
 const testItem = async (data) => {
     const url = 'http://localhost:8000/api/v1/item';
     for (const el of data) {
@@ -47,4 +62,4 @@ const testItem = async (data) => {
     }
 };
 
-testItem(testData).then();
+testItem(testData1).then();

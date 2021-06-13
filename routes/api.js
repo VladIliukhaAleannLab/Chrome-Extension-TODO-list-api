@@ -1,5 +1,6 @@
 const {authUser} = require ("../views/user");
 const {updateItemView, createItemView, deleteItemView} = require ("../views/item");
+const {getSyncListView} = require ("../views/list");
 
 const express = require('express');
 const router = express.Router();
@@ -13,5 +14,7 @@ router.post('/auth', authUser);
 router.post('/item', createItemView);
 router.put('/item', updateItemView);
 router.delete('/item', deleteItemView);
+
+router.post('/sync-list', getSyncListView);
 
 module.exports = router;

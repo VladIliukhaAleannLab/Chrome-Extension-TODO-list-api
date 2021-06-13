@@ -22,7 +22,7 @@ const deleteItem = async (item) => {
 const createItemView = async (req, res) => {
     try {
         const {item} = req.body;
-        await createItem(item);
+        await createItem({...item, updateDate: item.createDate});
         res.json({status: true})
     } catch (e) {
         res.json({status: false})
@@ -51,5 +51,8 @@ const deleteItemView = async (req, res) => {
 module.exports = {
     createItemView,
     updateItemView,
-    deleteItemView
+    deleteItemView,
+    createItem,
+    updateItem,
+    deleteItem
 };
