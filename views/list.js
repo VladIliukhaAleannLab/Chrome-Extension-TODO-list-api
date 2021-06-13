@@ -2,6 +2,34 @@ const { Item } = require('../schemas/init');
 const _ = require('lodash');
 const {createItem, updateItem, deleteItem} = require('./item');
 
+const getList = (items) => {
+    const initList = [
+        {
+            id: 'Todo',
+            items: []
+        },
+        {
+            id: 'In progress',
+            items: []
+        },
+        {
+            id: 'Complete',
+            items: []
+        }
+    ];
+
+    const _index = {
+        'Todo': 0,
+        'In progress': 1,
+        'Complete': 2,
+    };
+    items.forEach((el) => {
+        initList[_index[el.type]].items.push(el)
+    });
+
+    return initList;
+};
+
 const getSyncList = async (user, webItems) => {
     const items = await Item.find({user});
     let assignItems = [...webItems, ...items.map(el => el['_doc'])];
@@ -9,12 +37,16 @@ const getSyncList = async (user, webItems) => {
     _.uniqBy(assignItems, 'id').map((el) => {
         const webEl = webItems.find(e => `${e.id}` === `${el.id}`);
         const libEl = items.map(el => el['_doc']).find(e => `${e.id}` === `${el.id}`);
-        if (!webEl && libEl && !libEl.isAdminCreate) {
+        if (!webEl && libEl && !libEl.isAdminCreate && webItems.length !== 0) {
             deleteItem({id: libEl.id, user: libEl.user});
             return
         }
         if (!webEl?.updateDate && !libEl?.updateDate) {
-            syncItems.push(webEl);
+            if (webEl) {
+                syncItems.push(webEl);
+            } else {
+                syncItems.push(libEl);
+            }
         } else if (webEl?.updateDate && libEl?.updateDate){
             if (new Date(webEl.updateDate) >= libEl.updateDate) {
                 syncItems.push(webEl);
@@ -38,29 +70,7 @@ const getSyncList = async (user, webItems) => {
         await updateItem(item)
     });
 
-    const initList = [
-        {
-            id: 'Todo',
-            items: []
-        },
-        {
-            id: 'In progress',
-            items: []
-        },
-        {
-            id: 'Complete',
-            items: []
-        }
-    ];
-
-    const _index = {
-        'Todo': 0,
-        'In progress': 1,
-        'Complete': 2,
-    };
-    syncItems.forEach((el) => {
-        initList[_index[el.type]].items.push(el)
-    });
+    const initList = getList(syncItems);
     return {list: initList, isSync: true}
 };
 
@@ -80,6 +90,23 @@ const getSyncListView = async (req, res) => {
     }
 };
 
+const syncListView = async (req, res) => {
+    try {
+        const {user} = req.query;
+        const items = await Item.find({user});
+        const uniqItems = _.uniqBy(items, 'id');
+        const list = await getList(uniqItems);
+        res.json({
+            status: true,
+            list,
+        })
+
+    } catch (e) {
+        res.json({status: false})
+    }
+};
+
 module.exports = {
-    getSyncListView
+    getSyncListView,
+    syncListView
 };
