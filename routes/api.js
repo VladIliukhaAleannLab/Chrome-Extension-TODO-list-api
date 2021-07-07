@@ -9,6 +9,10 @@ router.get('/', function(req, res, next) {
   res.send('api v1');
 });
 
+router.get('/ping', function(req, res, next) {
+    res.send('pong');
+});
+
 router.post('/auth', authUser);
 
 router.post('/item', createItemView);
